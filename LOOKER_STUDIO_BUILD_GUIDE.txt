@@ -1,0 +1,24 @@
+LOOKER STUDIO DASHBOARD BUILD GUIDE
+====================================
+
+Use the prepared Google Sheet tabs:
+- Monthly_Analysis
+- Country_Analysis
+- Product_Analysis
+- Customer_Summary
+- Cancellation_Analysis
+
+Dashboard layout:
+1. KPI cards: Gross Sales, Orders, Customers, Cancellation Value, Repeat Revenue Share.
+2. Line chart: Month -> Revenue.
+3. Bar chart: Country -> Revenue (Top 10/12).
+4. Horizontal bar: Product -> Revenue (Top 10).
+5. Donut/pie: CustomerType -> Revenue.
+6. Bar/line chart: Month -> CancellationValue.
+7. Bar chart: UK AOV vs International AOV.
+8. Filters: Month and Country.
+9. Add a note: December 2011 is partial; profitability is unavailable because cost/margin is not present.
+
+Important:
+- The HTML dashboard in this package is an interactive local preview.
+- For the company's required Looker Studio deliverable, create the same layout in Looker Studio after uploading the workbook/tables to Google Sheets, then paste the shareable report URL into Q8.

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Retail — Management Dashboard</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#f5f7fa;color:#17202a}
+.header{background:#fff;padding:22px 30px;border-bottom:1px solid #e2e6ea}
+.header h1{margin:0 0 6px;font-size:28px}
+.header p{margin:0;color:#68727d}
+.controls{display:flex;gap:14px;flex-wrap:wrap;padding:18px 30px;background:#fff}
+select{padding:9px 12px;border:1px solid #ccd3da;border-radius:6px;min-width:180px;background:#fff}
+.container{padding:0 30px 30px}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:18px 0}
+.kpi{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:18px}
+.kpi .label{font-size:13px;color:#68727d;margin-bottom:8px}
+.kpi .value{font-size:25px;font-weight:700}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:#fff;border:1px solid #e2e6ea;border-radius:10px;padding:12px}
+.chart{height:390px}
+.note{background:#fff;border-left:4px solid #68727d;padding:14px 18px;margin-top:16px;color:#4c5660}
+@media(max-width:1000px){.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>Online Retail — Management Dashboard</h1>
+<p>Executive view of revenue, customers, markets, products and cancellation exposure • December 2011 is a partial month</p>
+</div>
+<div class="controls">
+<label>Month<br><select id="monthFilter"><option value="ALL">All months</option></select></label>
+<label>Country<br><select id="countryFilter"><option value="ALL">All countries</option></select></label>
+</div>
+<div class="container">
+<div class="kpis">
+<div class="kpi"><div class="label">Gross Sales</div><div class="value" id="gross">—</div></div>
+<div class="kpi"><div class="label">Orders</div><div class="value" id="orders">—</div></div>
+<div class="kpi"><div class="label">Customers</div><div class="value" id="customers">—</div></div>
+<div class="kpi"><div class="label">Cancellation Value</div><div class="value" id="cancel">—</div></div>
+<div class="kpi"><div class="label">Repeat Revenue Share</div><div class="value" id="repeat">—</div></div>
+</div>
+<div class="grid">
+<div class="card"><div id="trend" class="chart"></div></div>
+<div class="card"><div id="countries" class="chart"></div></div>
+<div class="card"><div id="products" class="chart"></div></div>
+<div class="card"><div id="mix" class="chart"></div></div>
+<div class="card"><div id="cancels" class="chart"></div></div>
+<div class="card"><div id="summary" class="chart"></div></div>
+</div>
+<div class="note"><b>Management takeaways:</b> prioritize repeat-customer retention, investigate material cancellation drivers, protect UK service levels while selectively expanding high-AOV international markets, and prepare inventory/fulfillment capacity before the Sep–Nov peak.</div>
+</div>
+<script>
+const D = {"monthly": [{"Month": "2010-12", "Revenue": 821452.73, "Orders": 1559, "Units": 358019, "Customers": 885, "AOV": 526.9100256574727}, {"Month": "2011-01", "Revenue": 689811.61, "Orders": 1086, "Units": 387099, "Customers": 741, "AOV": 635.1856445672191}, {"Month": "2011-02", "Revenue": 522545.56, "Orders": 1100, "Units": 282934, "Customers": 758, "AOV": 475.0414181818182}, {"Month": "2011-03", "Revenue": 716215.26, "Orders": 1454, "Units": 376599, "Customers": 974, "AOV": 492.58270976616234}, {"Month": "2011-04", "Revenue": 536968.491, "Orders": 1246, "Units": 307953, "Customers": 856, "AOV": 430.9538451043339}, {"Month": "2011-05", "Revenue": 769296.61, "Orders": 1681, "Units": 395001, "Customers": 1056, "AOV": 457.642242712671}, {"Month": "2011-06", "Revenue": 760547.01, "Orders": 1533, "Units": 388511, "Customers": 991, "AOV": 496.116771037182}, {"Month": "2011-07", "Revenue": 718076.121, "Orders": 1475, "Units": 399693, "Customers": 949, "AOV": 486.8312684745763}, {"Month": "2011-08", "Revenue": 757841.38, "Orders": 1361, "Units": 421020, "Customers": 935, "AOV": 556.8268772961059}, {"Month": "2011-09", "Revenue": 1056435.192, "Orders": 1837, "Units": 569573, "Customers": 1266, "AOV": 575.0872030484486}, {"Month": "2011-10", "Revenue": 1151263.73, "Orders": 2040, "Units": 621029, "Customers": 1364, "AOV": 564.3449656862745}, {"Month": "2011-11", "Revenue": 1503866.78, "Orders": 2769, "Units": 751377, "Customers": 1664, "AOV": 543.1082629107981}, {"Month": "2011-12", "Revenue": 637790.33, "Orders": 819, "Units": 313612, "Customers": 615, "AOV": 778.7427716727716}], "country": [{"Country": "United Kingdom", "Revenue": 9001744.094, "Orders": 18019, "Customers": 3920, "Units": 4646906}, {"Country": "Netherlands", "Revenue": 285446.34, "Orders": 94, "Customers": 9, "Units": 200361}, {"Country": "EIRE", "Revenue": 283140.52, "Orders": 288, "Customers": 3, "Units": 147007}, {"Country": "Germany", "Revenue": 228678.4, "Orders": 457, "Customers": 94, "Units": 119154}, {"Country": "France", "Revenue": 209625.37, "Orders": 392, "Customers": 87, "Units": 112060}, {"Country": "Australia", "Revenue": 138453.81, "Orders": 57, "Customers": 9, "Units": 83891}, {"Country": "Spain", "Revenue": 61558.56, "Orders": 90, "Customers": 30, "Units": 27933}, {"Country": "Switzerland", "Revenue": 57067.6, "Orders": 54, "Customers": 21, "Units": 30617}, {"Country": "Belgium", "Revenue": 41196.340000000004, "Orders": 98, "Customers": 25, "Units": 23237}, {"Country": "Sweden", "Revenue": 38367.83, "Orders": 36, "Customers": 8, "Units": 36078}, {"Country": "Japan", "Revenue": 37416.37, "Orders": 19, "Customers": 8, "Units": 26016}, {"Country": "Norway", "Revenue": 36165.44, "Orders": 36, "Customers": 10, "Units": 19336}, {"Country": "Portugal", "Revenue": 33683.05, "Orders": 58, "Customers": 19, "Units": 16231}, {"Country": "Finland", "Revenue": 22546.08, "Orders": 41, "Customers": 12, "Units": 10704}, {"Country": "Singapore", "Revenue": 21279.29, "Orders": 7, "Customers": 1, "Units": 5241}, {"Country": "Channel Islands", "Revenue": 20440.54, "Orders": 26, "Customers": 9, "Units": 9485}, {"Country": "Denmark", "Revenue": 18955.34, "Orders": 18, "Customers": 9, "Units": 8235}, {"Country": "Italy", "Revenue": 17483.24, "Orders": 38, "Customers": 14, "Units": 8112}, {"Country": "Hong Kong", "Revenue": 15483.0, "Orders": 11, "Customers": 0, "Units": 4713}, {"Country": "Cyprus", "Revenue": 13502.85, "Orders": 16, "Customers": 8, "Units": 6340}, {"Country": "Austria", "Revenue": 10198.68, "Orders": 17, "Customers": 11, "Units": 4881}, {"Country": "Israel", "Revenue": 8129.41, "Orders": 8, "Customers": 3, "Units": 4406}, {"Country": "Poland", "Revenue": 7334.65, "Orders": 19, "Customers": 6, "Units": 3684}, {"Country": "Greece", "Revenue": 4760.52, "Orders": 5, "Customers": 4, "Units": 1557}, {"Country": "Unspecified", "Revenue": 4740.94, "Orders": 13, "Customers": 4, "Units": 3295}, {"Country": "Iceland", "Revenue": 4310.0, "Orders": 7, "Customers": 1, "Units": 2458}, {"Country": "Canada", "Revenue": 3666.38, "Orders": 6, "Customers": 4, "Units": 2763}, {"Country": "USA", "Revenue": 3580.39, "Orders": 5, "Customers": 4, "Units": 2458}, {"Country": "Malta", "Revenue": 2725.59, "Orders": 5, "Customers": 2, "Units": 970}, {"Country": "United Arab Emirates", "Revenue": 1902.28, "Orders": 3, "Customers": 2, "Units": 982}, {"Country": "Lebanon", "Revenue": 1693.88, "Orders": 1, "Customers": 1, "Units": 386}, {"Country": "Lithuania", "Revenue": 1661.06, "Orders": 4, "Customers": 1, "Units": 652}, {"Country": "European Community", "Revenue": 1300.25, "Orders": 4, "Customers": 1, "Units": 499}, {"Country": "Brazil", "Revenue": 1143.6, "Orders": 1, "Customers": 1, "Units": 356}, {"Country": "RSA", "Revenue": 1002.3100000000001, "Orders": 1, "Customers": 1, "Units": 351}, {"Country": "Czech Republic", "Revenue": 826.74, "Orders": 2, "Customers": 1, "Units": 671}, {"Country": "Bahrain", "Revenue": 754.14, "Orders": 3, "Customers": 2, "Units": 314}, {"Country": "Saudi Arabia", "Revenue": 145.92000000000002, "Orders": 1, "Customers": 1, "Units": 80}], "product": [{"StockCode": "22423", "Description": "REGENCY CAKESTAND 3 TIER", "Revenue": 174156.54, "Units": 13851, "Orders": 1988}, {"StockCode": "23843", "Description": "PAPER CRAFT , LITTLE BIRDIE", "Revenue": 168469.6, "Units": 80995, "Orders": 1}, {"StockCode": "85123A", "Description": "WHITE HANGING HEART T-LIGHT HOLDER", "Revenue": 104284.24, "Units": 37580, "Orders": 2189}, {"StockCode": "47566", "Description": "PARTY BUNTING", "Revenue": 99445.23, "Units": 18283, "Orders": 1685}, {"StockCode": "85099B", "Description": "JUMBO BAG RED RETROSPOT", "Revenue": 94159.81, "Units": 48371, "Orders": 2089}, {"StockCode": "23166", "Description": "MEDIUM CERAMIC TOP STORAGE JAR", "Revenue": 81700.92000000001, "Units": 78033, "Orders": 247}, {"StockCode": "23084", "Description": "RABBIT NIGHT LIGHT", "Revenue": 66870.03, "Units": 30739, "Orders": 994}, {"StockCode": "22086", "Description": "PAPER CHAIN KIT 50'S CHRISTMAS", "Revenue": 64875.590000000004, "Units": 19329, "Orders": 1160}, {"StockCode": "84879", "Description": "ASSORTED COLOUR BIRD ORNAMENT", "Revenue": 58927.62, "Units": 36362, "Orders": 1455}, {"StockCode": "79321", "Description": "CHILLI LIGHTS", "Revenue": 54096.36, "Units": 10302, "Orders": 661}, {"StockCode": "23298", "Description": "SPOTTY BUNTING", "Revenue": 42513.48, "Units": 8320, "Orders": 1140}, {"StockCode": "22386", "Description": "JUMBO BAG PINK POLKADOT", "Revenue": 42401.01, "Units": 21448, "Orders": 1218}, {"StockCode": "21137", "Description": "BLACK RECORD COVER FRAME", "Revenue": 40633.38, "Units": 11651, "Orders": 375}, {"StockCode": "22502", "Description": "PICNIC BASKET WICKER 60 PIECES", "Revenue": 39619.5, "Units": 61, "Orders": 2}, {"StockCode": "23284", "Description": "DOORMAT KEEP CALM AND COME IN", "Revenue": 38133.64, "Units": 5487, "Orders": 728}], "customer_mix": [{"CustomerType": "One-time", "Revenue": 613989.561, "Customers": 1493}, {"CustomerType": "Repeat", "Revenue": 8273219.333000001, "Customers": 2845}], "cancellation": [{"Month": "2010-12", "CancellationValue": 74789.12}, {"Month": "2011-01", "CancellationValue": 131364.30000000002}, {"Month": "2011-02", "CancellationValue": 25569.24}, {"Month": "2011-03", "CancellationValue": 34372.28}, {"Month": "2011-04", "CancellationValue": 44601.5}, {"Month": "2011-05", "CancellationValue": 47202.51}, {"Month": "2011-06", "CancellationValue": 70616.78}, {"Month": "2011-07", "CancellationValue": 37921.08}, {"Month": "2011-08", "CancellationValue": 54333.75}, {"Month": "2011-09", "CancellationValue": 38902.55}, {"Month": "2011-10", "CancellationValue": 84274.63}, {"Month": "2011-11", "CancellationValue": 47740.08}, {"Month": "2011-12", "CancellationValue": 205124.67}], "meta": {"gross": 10642110.804000001, "orders": 19960, "customers": 4338, "units": 5572420, "cancel_value": 896812.49, "repeat_share": 93.09131170063391, "uk_share": 84.58607751590554, "uk_aov": 499.5695706753982, "intl_aov": 845.1142246264811, "months": ["2010-12", "2011-01", "2011-02", "2011-03", "2011-04", "2011-05", "2011-06", "2011-07", "2011-08", "2011-09", "2011-10", "2011-11", "2011-12"], "countries": ["Australia", "Austria", "Bahrain", "Belgium", "Brazil", "Canada", "Channel Islands", "Cyprus", "Czech Republic", "Denmark", "EIRE", "European Community", "Finland", "France", "Germany", "Greece", "Hong Kong", "Iceland", "Israel", "Italy", "Japan", "Lebanon", "Lithuania", "Malta", "Netherlands", "Norway", "Poland", "Portugal", "RSA", "Saudi Arabia", "Singapore", "Spain", "Sweden", "Switzerland", "USA", "United Arab Emirates", "United Kingdom", "Unspecified"]}};
+const money = x => "£" + Number(x).toLocaleString("en-GB",{maximumFractionDigits:0});
+const num = x => Number(x).toLocaleString("en-IN");
+const monthSel=document.getElementById("monthFilter"), countrySel=document.getElementById("countryFilter");
+D.meta.months.forEach(m=>monthSel.insertAdjacentHTML("beforeend",`<option value="${m}">${m}</option>`));
+D.meta.countries.forEach(c=>countrySel.insertAdjacentHTML("beforeend",`<option value="${c}">${c}</option>`));
+
+function filteredRows(){
+  const m=monthSel.value, c=countrySel.value;
+  return D.monthly; // monthly trend remains global for management context
+}
+function update(){
+  const m=monthSel.value, c=countrySel.value;
+  // Reconstruct country/product/customer KPIs from monthly/country aggregates when possible.
+  let gross=D.meta.gross, ord=D.meta.orders, cust=D.meta.customers, cv=D.meta.cancel_value;
+  if(m!=="ALL"){
+    const r=D.monthly.find(x=>x.Month===m);
+    gross=r?.Revenue||0; ord=r?.Orders||0; cust=r?.Customers||0;
+    const cr=D.cancellation.find(x=>x.Month===m); cv=cr?.CancellationValue||0;
+  } else if(c!=="ALL"){
+    const r=D.country.find(x=>x.Country===c);
+    gross=r?.Revenue||0; ord=r?.Orders||0; cust=r?.Customers||0;
+  }
+  document.getElementById("gross").textContent=money(gross);
+  document.getElementById("orders").textContent=num(ord);
+  document.getElementById("customers").textContent=num(cust);
+  document.getElementById("cancel").textContent=money(cv);
+  document.getElementById("repeat").textContent=D.meta.repeat_share.toFixed(1)+"%";
+
+  let mon=D.monthly;
+  if(c!=="ALL"){
+    // Country-specific monthly detail is not stored in aggregate table; show global trend and clearly label it.
+    Plotly.react("trend",[{x:mon.map(x=>x.Month),y:mon.map(x=>x.Revenue),type:"scatter",mode:"lines+markers"}],
+      {title:"Monthly Revenue Trend (overall)",margin:{t:55,l:60,r:20,b:70},yaxis:{title:"Revenue (£)"},xaxis:{title:"Month"}},{responsive:true});
+  } else {
+    Plotly.react("trend",[{x:mon.map(x=>x.Month),y:mon.map(x=>x.Revenue),type:"scatter",mode:"lines+markers"}],
+      {title:"Monthly Revenue Trend",margin:{t:55,l:60,r:20,b:70},yaxis:{title:"Revenue (£)"},xaxis:{title:"Month"}},{responsive:true});
+  }
+
+  let cr=D.country.filter(x=>c==="ALL" || x.Country===c).slice(0,12);
+  Plotly.react("countries",[{x:cr.map(x=>x.Country),y:cr.map(x=>x.Revenue),type:"bar"}],
+    {title:c==="ALL"?"Top Countries by Revenue":"Selected Country",margin:{t:55,l:120,r:20,b:70},yaxis:{title:"Revenue (£)"},xaxis:{title:"Country"}},{responsive:true});
+
+  let pr=D.product.slice(0,10).reverse();
+  Plotly.react("products",[{x:pr.map(x=>x.Revenue),y:pr.map(x=>x.Description),type:"bar",orientation:"h"}],
+    {title:"Top Products by Revenue",margin:{t:55,l:210,r:20,b:55},xaxis:{title:"Revenue (£)"}},{responsive:true});
+
+  Plotly.react("mix",[{labels:D.customer_mix.map(x=>x.CustomerType),values:D.customer_mix.map(x=>x.Revenue),type:"pie",hole:.45}],
+    {title:"Revenue Mix: Repeat vs One-time",margin:{t:55,l:20,r:20,b:20}},{responsive:true});
+
+  Plotly.react("cancels",[{x:D.cancellation.map(x=>x.Month),y:D.cancellation.map(x=>x.CancellationValue),type:"bar"}],
+    {title:"Monthly Cancellation Value",margin:{t:55,l:60,r:20,b:70},yaxis:{title:"Cancellation (£)"},xaxis:{title:"Month"}},{responsive:true});
+
+  const intl=D.meta.intl_aov, uk=D.meta.uk_aov;
+  Plotly.react("summary",[{x:["UK AOV","International AOV"],y:[uk,intl],type:"bar"}],
+    {title:"Average Order Value Comparison",margin:{t:55,l:60,r:20,b:55},yaxis:{title:"AOV (£)"}},{responsive:true});
+}
+monthSel.addEventListener("change",update); countrySel.addEventListener("change",update); update();
+</script>
+</body></html>
